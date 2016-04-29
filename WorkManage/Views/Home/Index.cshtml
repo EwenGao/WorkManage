@@ -1,0 +1,109 @@
+﻿@model DataTable
+@{
+    ViewBag.Title = "个人工作管理";
+}
+<div class="container">
+    <div class="row">
+        <div class="span12">
+            <div class="page-header">
+                <h1>工作管理</h1>
+                <div style="float: right">
+                    <div class="btn-group" style="margin: 9px 0 5px;">
+                        <a href="#mymodal" data-toggle="modal" data-target="#mymodal" id="btnCreate" class="btn btn-mini btn-default">新增工作</a>
+
+                    </div>
+                </div>
+                <div style="clear: both"></div>
+            </div>
+            <div class="alert alert-warning alert-dismissible fade" role="alert">
+                <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span></button>
+                <strong>Warning!</strong> Better check yourself, you're not looking too good.
+            </div>
+            <div class="list-group">
+                @if (Model != null && Model.Rows.Count > 0)
+                {
+                    foreach (DataRow m in Model.Rows)
+                    {
+                    <div class="jumbotron alert-warning" style="padding: 20px 30px;">
+                        <h2 style="position: relative; line-height: 36px;">@m["WorkName"] <span style="font-size: 20px; position: absolute; right: 20px;">工作时间：@(Convert.ToDateTime(m["CreateDate"]).ToString("yyyy-MM-dd"))</span></h2>
+                        <p>@m["Description"]</p>
+                        <p>
+                            <a href="javascript:void(0)" class="btn btn-default" onclick="FinishWork(@m["WorkId"])" >完成工作</a>
+                            <a href="javascript:void(0)" class="btn btn-default" onclick="Update(@m["WorkId"],'@m["WorkName"]','@m["Description"]','@m["WorkMark"]')" >更新工作</a>
+                            <a href="javascript:void(0)" class="btn btn-default" onclick="DeleteWork(@m["WorkId"])">删除工作</a>
+                        </p>
+                        @if (!string.IsNullOrWhiteSpace(m["WorkMark"].ToString()))
+                        {
+                            <div class="panel panel-default">
+                                <div class="panel-heading">备注</div>
+                                <div class="panel-body" style="color: #ebccd1;">
+                                    @m["WorkMark"]
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    }
+
+                }
+            </div>
+
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="mymodal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title">新增工作</h4>
+            </div>
+            <form method="post" action="@Url.Action("CreateWork", "Home")">
+                <div class="modal-body">
+                    @Html.Hidden("WorkId")
+                    <p>
+                        @Html.TextBox("WorkName", null, new { @class = "form-control", placeholder = "工作名称" })
+                    </p>
+                    <p>
+                        @Html.TextArea("Description", null, new { @class = "form-control", rows = "5", placeholder = "工作内容", style = "resize: none;" })
+                    </p>
+                    <p>
+                        @Html.TextArea("WorkMark", null, new { @class = "form-control", rows = "5", placeholder = "工作备注", style = "resize: none;" })
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="submit" class="btn btn-primary">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="deleteModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                确认删除这条工作数据吗？
+            </div>
+            <div class="modal-footer" style="padding: 5px;">
+                <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-sm btn-primary" id="btnDelete">删除</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="finishModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                这条工作的内容，你都已经全部完成了吗？
+            </div>
+            <div class="modal-footer" style="padding: 5px;">
+                <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-sm btn-primary" id="btnFinish">完成</button>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script type="text/javascript" src="/Scripts/index.js"></script>
+}
