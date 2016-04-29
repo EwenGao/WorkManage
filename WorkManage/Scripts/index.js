@@ -2,6 +2,7 @@
 $(function () {
     $("#btnCreate").click(function () {
         $("#mymodal input").val("");
+        $("#mymodal textarea").val("");
         $(".modal-title").html("新增工作");
         $("form").attr("action", "/Home/CreateWork");
     });
